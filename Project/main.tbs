@@ -1,0 +1,70 @@
+include "global.tbh"
+
+declare sub lcd_set_color_rgb(red as word, green as word, blue as word, back_fore as lcd_back_fore) 
+declare sub lcd_set_color_name(color as lcd_colors, back_fore as lcd_back_fore)
+'====================================================================
+
+sub on_sys_init()
+	
+	'----- INIT LCD -----
+	
+	lcd.width=320
+	lcd.height=240
+	io.num=PL_IO_NUM_55
+	io.enabled=YES
+	io.num=PL_IO_NUM_43
+	io.enabled=YES
+	io.num=PL_IO_NUM_42
+	io.enabled=YES
+	io.num=PL_IO_NUM_41
+	io.enabled=YES
+	io.num=PL_IO_NUM_40
+	io.enabled=YES
+	lcd.iomapping="55,43,42,41,40,0" 'RST,DC,WR,RD,CS,data_bus
+	lcd.rotated=YES 'yes, the LCD is installed up side down
+	lcd.enabled=YES
+	io.num=PL_IO_NUM_54 
+	io.enabled=YES
+	io.state=LOW
+
+	lcd.lock
+	lcd_set_color_name(LCD_COLOR_BLACK,LCD_BOTH)
+	lcd.fill(0,0,lcd.width,lcd.height)
+	lcd_set_color_rgb(255,128,0,LCD_BACKGROUND)
+	lcd_set_color_name(LCD_COLOR_TEAL,LCD_FOREGROUND)
+	lcd.linewidth=50
+	lcd.filledrectangle(0+50,0+50,lcd.width-50,lcd.height-50)
+	lcd.unlock
+	
+end sub
+
+sub lcd_set_color_rgb(red as word, green as word, blue as word, back_fore as lcd_back_fore)
+	
+	red = (red/8)
+	green =(green/4) shl 5
+	blue = (blue/8) shl 11
+	dim color as word = red + green + blue
+	
+	select case back_fore
+	case LCD_BACKGROUND:
+		lcd.backcolor=color
+	case LCD_FOREGROUND:
+		lcd.forecolor=color
+	case LCD_BOTH:
+		lcd.backcolor=color
+		lcd.forecolor=color
+	end select
+	
+end sub
+
+sub lcd_set_color_name(color as lcd_colors, back_fore as lcd_back_fore)
+	select case back_fore
+	case LCD_BACKGROUND:
+		lcd.backcolor=color
+	case LCD_FOREGROUND:
+		lcd.forecolor=color
+	case LCD_BOTH:
+		lcd.backcolor=color
+		lcd.forecolor=color
+	end select
+end sub
